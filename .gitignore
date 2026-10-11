@@ -24,6 +24,15 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.env
+foodorder.db
+instance/
+
 MANIFEST
 
 # PyInstaller
