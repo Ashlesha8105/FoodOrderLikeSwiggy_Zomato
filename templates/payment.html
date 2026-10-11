@@ -1,0 +1,83 @@
+
+{% extends "base.html" %}
+
+{% block title %}UPI Payment | Smart Food{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5 text-center">
+
+                    <h2 class="fw-bold">📱 UPI Payment</h2>
+                    <p class="text-muted">
+                        Scan the QR code using your UPI app.
+                    </p>
+
+                    <div class="payment-qr my-4">
+                        <img
+                            src="{{ url_for('static', filename='images/upi-qr.png') }}"
+                            alt="UPI Payment QR Code"
+                            class="img-fluid rounded"
+                            style="max-width: 260px;"
+                            onerror="this.style.display='none'; document.getElementById('qrMissing').style.display='block';">
+
+                        <div id="qrMissing" class="alert alert-warning mt-3"
+                             style="display:none;">
+                            Add your own UPI QR image at
+                            <code>static/images/upi-qr.png</code>.
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info text-start">
+                        <strong>Order ID:</strong> #{{ order.id }}<br>
+                        <strong>Amount:</strong>
+                        ₹{{ "%.2f"|format(order.total_amount) }}<br>
+                        <strong>Payment Status:</strong>
+                        {{ order.payment_status }}
+                    </div>
+
+                    <p class="small text-muted">
+                        After making payment, enter the UPI transaction
+                        reference below. Your payment will remain pending
+                        until an administrator verifies it.
+                    </p>
+
+                    <form method="POST"
+                          action="{{ url_for('payment', order_id=order.id) }}"
+                          class="text-start mt-4">
+
+                        <div class="mb-3">
+                            <label for="transaction_id" class="form-label">
+                                UPI Transaction Reference
+                            </label>
+                            <input
+                                type="text"
+                                id="transaction_id"
+                                name="transaction_id"
+                                class="form-control"
+                                placeholder="Enter transaction reference"
+                                maxlength="100"
+                                required>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-warning w-100 fw-bold">
+                            Submit Payment Reference
+                        </button>
+                    </form>
+
+                    <a href="{{ url_for('track_order', order_id=order.id) }}"
+                       class="btn btn-outline-dark w-100 mt-3">
+                        Track My Order
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

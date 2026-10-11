@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Track Order #{{ order.id }} | Smart Food{% endblock %}
+
+{% block content %}
+<div class="container premium-tracking-page py-4 py-lg-5">
+
+    <!-- Page Header -->
+    <div class="tracking-page-header">
+        <div>
+            <a href="{{ url_for('orders') }}" class="tracking-back-link">
+                ← Back to my orders
+            </a>
+            <span class="tracking-eyebrow">YOUR FOOD IS ON ITS JOURNEY</span>
+            <h2>Track your order <span>📦</span></h2>
+            <p>Order #{{ order.id }} · Follow every step to your doorstep.</p>
+        </div>
+
+        <div class="tracking-current-status">
+            <span class="tracking-status-dot"></span>
+            {{ order.order_status }}
+        </div>
+    </div>
+
+    {% set progress_statuses = [
+        'New Order',
+        'Preparing',
+        'Ready for Pickup',
+        'Out for Delivery',
+        'Delivered'
+    ] %}
+
+    {% set current_index = progress_statuses.index(order.order_status) if order.order_status in progress_statuses else -1 %}
+    {% set is_cancelled = order.order_status|string|lower == 'cancelled' %}
+
+    <!-- Order Progress -->
+    <section class="tracking-panel tracking-progress-panel mb-4">
+        <div class="tracking-panel-heading">
+            <div>
+                <h4>Order progress</h4>
+                <p>
+                    {% if is_cancelled %}
+                        This order has been cancelled.
+                    {% elif order.order_status == 'Delivered' %}
+                        Your order has arrived. Enjoy your meal!
+                    {% elif order.order_status == 'Out for Delivery' %}
+                        Your food is on its way to you.
+                    {% elif order.order_status == 'Ready for Pickup' %}
+                        Your order is ready for the delivery rider.
+                    {% elif order.order_status == 'Preparing' %}
+                        The kitchen is preparing your order.
+                    {% else %}
+                        Your order journey starts here.
+                    {% endif %}
+                </p>
+            </div>
+            <span class="tracking-food-icon">🍽️</span>
+        </div>
+
+        {% if is_cancelled %}
+            <div class="tracking-cancelled-message">
+                <span class="tracking-cancelled-icon">!</span>
+                <div>
+                    <strong>Order cancelled</strong>
+                    <p>This order is no longer progressing through delivery.</p>
+                </div>
+            </div>
+        {% else %}
+
+            <div class="premium-tracking-timeline">
+                {% for status in progress_statuses %}
+                <div class="tracking-timeline-step
+                    {% if current_index >= loop.index0 %}step-completed{% endif %}
+                    {% if current_index == loop.index0 %}step-current{% endif %}">
+
+                    <div class="timeline-marker">
+                        {% if current_index >= loop.index0 %}
+                            <span>✓</span>
+                        {% else %}
+                            <span>{{ loop.index }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="timeline-step-text">
+                        <strong>{{ status }}</strong>
+                        <small>
+                            {% if loop.index0 == 0 %}
+                                Order received
+                            {% elif loop.index0 == 1 %}
+                                Freshly prepared
+                            {% elif loop.index0 == 2 %}
+                                Ready to go
+                            {% elif loop.index0 == 3 %}
+                                Heading your way
+                            {% else %}
+                                Delivered to you
+                            {% endif %}
+                        </small>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if current_index == -1 %}
+            <p class="tracking-status-note">
+                Current status: {{ order.order_status }}.
+                The progress timeline will update when the order status matches a delivery stage.
+            </p>
+            {% endif %}
+
+        {% endif %}
+    </section>
+
+    <!-- Order Items and Details -->
+    <div class="row g-4">
+
+        <!-- Ordered Food -->
+        <div class="col-lg-7">
+            <section class="tracking-panel tracking-items-panel h-100">
+
+                <div class="tracking-panel-heading">
+                    <div>
+                        <h4>Your delicious order</h4>
+                        <p>Here's what's included in your order.</p>
+                    </div>
+                    <span class="tracking-section-icon">🛍️</span>
+                </div>
+
+                <div class="tracking-food-list">
+                    {% for item in items %}
+                    <div class="tracking-food-item">
+
+                        <div class="tracking-food-placeholder">🍴</div>
+
+                        <div class="tracking-food-info">
+                            <strong>{{ item.food_name }}</strong>
+                            <span>Quantity: {{ item.quantity }}</span>
+                        </div>
+
+                        <div class="tracking-food-price">
+                            ₹{{ "%.2f"|format(item.price * item.quantity) }}
+                        </div>
+
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">
+                        No order items were found.
+                    </p>
+                    {% endfor %}
+                </div>
+
+                <div class="tracking-total-row">
+                    <span>Total amount</span>
+                    <strong>
+                        ₹{{ "%.2f"|format(order.total_amount) }}
+                    </strong>
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Delivery and Payment -->
+        <div class="col-lg-5">
+
+            <!-- Delivery Details -->
+            <section class="tracking-panel tracking-detail-panel mb-4">
+
+                <div class="tracking-panel-heading">
+                    <div>
+                        <h4>Delivery details</h4>
+                        <p>Where your food is going.</p>
+                    </div>
+                    <span class="tracking-section-icon">📍</span>
+                </div>
+
+                <div class="tracking-address-box">
+                    <span class="tracking-address-icon">🏠</span>
+                    <div>
+                        <span class="tracking-small-label">DELIVER TO</span>
+                        <p>{{ order['delivery_address'] }}</p>
+                    </div>
+                </div>
+
+                <div class="tracking-rider-box">
+                    <span class="tracking-rider-icon">🛵</span>
+                    <div class="tracking-rider-info">
+                        <span class="tracking-small-label">DELIVERY RIDER</span>
+
+                        {% if rider %}
+                            <strong>{{ rider['name'] }}</strong>
+
+                            {% if rider['phone'] %}
+                            <a href="tel:{{ rider['phone'] }}"
+                               class="tracking-rider-phone">
+                                ☎ {{ rider['phone'] }}
+                            </a>
+                            {% else %}
+                            <span class="tracking-muted-text">
+                                Phone number not available
+                            </span>
+                            {% endif %}
+
+                        {% else %}
+                            <strong>Not assigned yet</strong>
+                            <span class="tracking-muted-text">
+                                Rider details will appear when assigned.
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Payment Details -->
+            <section class="tracking-panel tracking-detail-panel">
+
+                <div class="tracking-panel-heading">
+                    <div>
+                        <h4>Payment details</h4>
+                        <p>Your payment information.</p>
+                    </div>
+                    <span class="tracking-section-icon">💳</span>
+                </div>
+
+                <div class="tracking-payment-row">
+                    <span>Payment method</span>
+                    <strong>{{ order.payment_method }}</strong>
+                </div>
+
+                <div class="tracking-payment-row">
+                    <span>Payment status</span>
+
+                    {% if order.payment_status|string|lower == 'paid' %}
+                        <span class="tracking-payment-badge payment-success">
+                            ✓ {{ order.payment_status }}
+                        </span>
+                    {% else %}
+                        <span class="tracking-payment-badge payment-pending">
+                            {{ order.payment_status }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if order.payment_method == 'UPI'
+                      and order.payment_status != 'Paid'
+                      and not is_cancelled %}
+                    <a
+                        href="{{ url_for('payment', order_id=order.id) }}"
+                        class="tracking-pay-btn">
+                        Complete UPI payment <span>→</span>
+                    </a>
+                {% endif %}
+
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Bottom Help -->
+    <div class="tracking-help-strip mt-4">
+        <span class="tracking-help-icon">💬</span>
+        <div>
+            <strong>Thanks for choosing Smart Food!</strong>
+            <p>We hope every bite makes you happy.</p>
+        </div>
+        <a href="{{ url_for('menu') }}" class="tracking-browse-link">
+            Explore menu →
+        </a>
+    </div>
+
+</div>
+{% endblock %}

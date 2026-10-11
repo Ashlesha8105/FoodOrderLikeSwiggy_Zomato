@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout | Smart Food{% endblock %}
+
+{% block content %}
+<div class="container premium-checkout-page py-4 py-lg-5">
+
+    <!-- Page Heading -->
+    <div class="checkout-page-heading mb-4">
+        <span class="checkout-eyebrow">ALMOST THERE!</span>
+        <h2>Complete your order <span>🍽️</span></h2>
+        <p>Fresh food, delivered to your doorstep.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('checkout') }}">
+        <div class="row g-4 align-items-start">
+
+            <!-- Delivery and Payment -->
+            <div class="col-lg-7">
+
+                <!-- Delivery Details -->
+                <section class="premium-checkout-card mb-4">
+                    <div class="checkout-card-heading">
+                        <div class="checkout-step-icon">01</div>
+                        <div>
+                            <h4>Delivery details</h4>
+                            <p>Where should we deliver your food?</p>
+                        </div>
+                    </div>
+
+                    <div class="checkout-form-content">
+
+                        <div class="mb-3">
+                            <label for="customer_name" class="form-label">
+                                Customer name
+                            </label>
+                            <input
+                                type="text"
+                                id="customer_name"
+                                class="form-control checkout-input"
+                                value="{{ customer.name }}"
+                                readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="customer_email" class="form-label">
+                                Email address
+                            </label>
+                            <input
+                                type="email"
+                                id="customer_email"
+                                class="form-control checkout-input"
+                                value="{{ customer.email }}"
+                                readonly>
+                        </div>
+
+                        <div class="mb-0">
+                            <label for="delivery_address" class="form-label">
+                                Delivery address <span class="required-star">*</span>
+                            </label>
+                            <textarea
+                                id="delivery_address"
+                                name="delivery_address"
+                                class="form-control checkout-input"
+                                rows="4"
+                                maxlength="1000"
+                                placeholder="House/flat number, street, area, city, pincode..."
+                                required>{{ customer.address }}</textarea>
+                            <small class="checkout-field-hint">
+                                Add your complete address to help us deliver correctly.
+                            </small>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Payment Method -->
+                <section class="premium-checkout-card">
+                    <div class="checkout-card-heading">
+                        <div class="checkout-step-icon">02</div>
+                        <div>
+                            <h4>Payment method</h4>
+                            <p>Choose how you want to pay.</p>
+                        </div>
+                    </div>
+
+                    <div class="checkout-form-content">
+                        <div class="payment-method-grid">
+
+                            <label class="premium-payment-option" for="payment_upi">
+                                <input
+                                    type="radio"
+                                    id="payment_upi"
+                                    name="payment_method"
+                                    value="UPI"
+                                    required>
+
+                                <span class="payment-option-icon">📱</span>
+
+                                <span class="payment-option-text">
+                                    <strong>UPI payment</strong>
+                                    <small>Pay using UPI</small>
+                                </span>
+
+                                <span class="payment-radio-indicator"></span>
+                            </label>
+
+                            <label class="premium-payment-option" for="payment_cod">
+                                <input
+                                    type="radio"
+                                    id="payment_cod"
+                                    name="payment_method"
+                                    value="COD"
+                                    required>
+
+                                <span class="payment-option-icon">💵</span>
+
+                                <span class="payment-option-text">
+                                    <strong>Cash on delivery</strong>
+                                    <small>Pay when your food arrives</small>
+                                </span>
+
+                                <span class="payment-radio-indicator"></span>
+                            </label>
+
+                        </div>
+
+                        <p class="checkout-payment-note">
+                            <span>ⓘ</span>
+                            Select UPI only if your existing checkout backend
+                            supports the UPI payment flow. This page does not
+                            process payments by itself.
+                        </p>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-5">
+                <aside class="premium-order-summary checkout-summary">
+
+                    <div class="summary-heading">
+                        <div>
+                            <h4>Your order</h4>
+                            <p>Review your delicious choices</p>
+                        </div>
+                        <span class="checkout-bag-icon">🛍️</span>
+                    </div>
+
+                    <div class="checkout-items-list">
+                        {% for item in items %}
+                        <div class="checkout-order-item">
+
+                            <div class="checkout-item-image">
+                                {% if item.image %}
+                                <img
+                                    src="{{ item.image }}"
+                                    alt="{{ item.name }}"
+                                    loading="lazy">
+                                {% else %}
+                                <span>🍽️</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="checkout-item-details">
+                                <strong>{{ item.name }}</strong>
+                                <span>Qty: {{ item.quantity }}</span>
+                            </div>
+
+                            <div class="checkout-item-price">
+                                ₹{{ "%.2f"|format(item.price * item.quantity) }}
+                            </div>
+
+                        </div>
+                        {% else %}
+                        <div class="checkout-empty-message">
+                            Your cart is empty.
+                            <a href="{{ url_for('menu') }}">Browse the menu</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-row">
+                        <span>Item total</span>
+                        <span>₹{{ "%.2f"|format(total) }}</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Delivery fee</span>
+                        <span class="checkout-free-label">FREE</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Platform fee</span>
+                        <span>₹0.00</span>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-row summary-grand-total">
+                        <span>Total payable</span>
+                        <span>₹{{ "%.2f"|format(total) }}</span>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="premium-checkout-btn"
+                        {% if not items %}disabled{% endif %}>
+                        Place order
+                        <span>→</span>
+                    </button>
+
+                    <div class="checkout-trust-note">
+                        <span>🔒</span>
+                        <span>Please verify your address and payment method before placing your order.</span>
+                    </div>
+
+                    <a href="{{ url_for('cart') }}"
+                       class="checkout-back-link">
+                        ← Back to cart
+                    </a>
+
+                </aside>
+            </div>
+
+        </div>
+    </form>
+</div>
+{% endblock %}

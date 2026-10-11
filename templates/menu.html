@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Food | Smart Food{% endblock %}
+
+{% block content %}
+
+<!-- ================= MENU HERO ================= -->
+<section class="menu-hero premium-menu-hero">
+
+    <div class="container">
+
+        <span class="eyebrow">
+            <i class="fa-solid fa-utensils me-2"></i>
+            FRESH FOOD, HAPPY MOOD
+        </span>
+
+        <h1>
+            Find your next
+            <span>favourite meal.</span>
+        </h1>
+
+        <p>
+            From comforting classics to exciting new flavours,
+            something delicious is waiting for you.
+        </p>
+
+        <!-- Search -->
+        <form action="{{ url_for('menu') }}"
+              method="GET"
+              class="menu-search">
+
+            {% if selected_category %}
+            <input type="hidden"
+                   name="category"
+                   value="{{ selected_category }}">
+            {% endif %}
+
+            <i class="fa-solid fa-magnifying-glass menu-search-icon"></i>
+
+            <input type="search"
+                   name="q"
+                   placeholder="Search pizza, burger, biryani..."
+                   value="{{ search_query or '' }}"
+                   aria-label="Search food">
+
+            <button type="submit">
+                Search
+                <i class="fa-solid fa-arrow-right ms-1"></i>
+            </button>
+
+        </form>
+
+        <div class="menu-hero-benefits">
+            <span>
+                <i class="fa-solid fa-circle-check"></i>
+                Delicious choices
+            </span>
+
+            <span>
+                <i class="fa-solid fa-bag-shopping"></i>
+                Easy ordering
+            </span>
+
+            <span>
+                <i class="fa-solid fa-heart"></i>
+                Made for you
+            </span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= MENU CONTENT ================= -->
+<section class="section-block premium-menu-section">
+
+    <div class="container">
+
+        <!-- Section Heading -->
+        <div class="section-heading premium-menu-heading">
+
+            <div>
+                <span class="section-eyebrow">
+                    EXPLORE THE MENU
+                </span>
+
+                <h2>
+                    Delicious food,
+                    <span>your way.</span>
+                </h2>
+
+                <p>
+                    Pick a category and discover something tasty.
+                </p>
+            </div>
+
+            <div class="results-count">
+                <i class="fa-solid fa-bowl-food me-2"></i>
+                {{ foods|length }} items found
+            </div>
+
+        </div>
+
+
+        <!-- Category Filters -->
+        <div class="menu-filter-panel">
+
+            <div class="filter-title">
+                <i class="fa-solid fa-sliders me-2"></i>
+                Browse categories
+            </div>
+
+            
+                <div class="category-pills">
+
+                    <a href="{{ url_for('menu', q=search_query or '') }}"
+                    class="category-pill {% if not selected_category %}active{% endif %}">
+                        <i class="fa-solid fa-border-all me-1"></i>
+                        All Food
+                    </a>
+
+                    {% for category in categories %}
+                    <a href="{{ url_for('menu', category=category, q=search_query or '') }}"
+                    class="category-pill {% if selected_category == category %}active{% endif %}">
+                        {{ category }}
+                    </a>
+                    {% endfor %}
+
+                </div>
+
+
+        </div>
+
+
+        <!-- Food Results -->
+        {% if foods %}
+
+        <div class="food-grid premium-food-grid">
+
+            {% for food in foods %}
+
+            <article class="food-card premium-menu-card">
+
+                <!-- Food Image -->
+                <div class="premium-food-image-wrap">
+
+                    <img
+                        src="{{ food['image'] or 'https://placehold.co/500x350?text=Delicious+Food' }}"
+                        alt="{{ food['name'] }}"
+                        class="food-image"
+                        loading="lazy"
+                        onerror="this.onerror=null;this.src='https://placehold.co/500x350?text=Delicious+Food';">
+
+                    <span class="menu-food-category">
+                        {{ food['category'] or 'Food' }}
+                    </span>
+
+                </div>
+
+
+                <!-- Food Details -->
+                <div class="food-card-body">
+
+                    <div class="menu-food-title-row">
+
+                        <h3>{{ food['name'] }}</h3>
+
+                        <span class="menu-food-status">
+                            <span></span>
+                            Available
+                        </span>
+
+                    </div>
+
+                    <p class="food-description">
+                        {{ food['description'] or 'Freshly prepared and delicious.' }}
+                    </p>
+
+
+                    <!-- Price and Add Button -->
+                    <div class="food-card-bottom">
+
+                        <div class="menu-price-wrap">
+                            <small>PRICE</small>
+                            <span class="food-price">
+                                ₹{{ "%.0f"|format(food['price']) }}
+                            </span>
+                        </div>
+
+                        <form action="{{ url_for('add_to_cart', food_id=food['id']) }}"
+                              method="POST">
+
+                            <button type="submit"
+                                    class="add-food-btn"
+                                    aria-label="Add {{ food['name'] }} to cart">
+
+                                Add
+                                <i class="fa-solid fa-plus ms-2"></i>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <!-- Empty State -->
+        <div class="menu-empty-state">
+
+            <div class="empty-food-icon">
+                <i class="fa-solid fa-bowl-food"></i>
+            </div>
+
+            <h3>No food found</h3>
+
+            <p>
+                We couldn't find a match for your search.
+                Try another dish or browse all available food.
+            </p>
+
+            <a href="{{ url_for('menu') }}"
+               class="btn btn-orange">
+                <i class="fa-solid fa-arrow-left me-2"></i>
+                Explore All Food
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

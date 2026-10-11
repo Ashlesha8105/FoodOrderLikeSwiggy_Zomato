@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Orders | Smart Food Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid premium-admin-orders py-4 py-lg-5">
+
+    <!-- Dashboard Header -->
+    <div class="admin-orders-header">
+        <div>
+            <span class="admin-orders-eyebrow">SMART FOOD ADMINISTRATION</span>
+            <h2>Manage Orders <span>📦</span></h2>
+            <p>Manage deliveries, verify payments, and keep orders moving.</p>
+        </div>
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-dashboard-back">
+            <span>←</span> Dashboard
+        </a>
+    </div>
+
+    <!-- Summary -->
+    <div class="admin-orders-overview">
+        <div class="admin-overview-card">
+            <span class="admin-overview-icon">📦</span>
+            <div>
+                <span class="admin-overview-label">TOTAL ORDERS</span>
+                <strong>{{ orders|length }}</strong>
+            </div>
+        </div>
+
+        <div class="admin-overview-card">
+            <span class="admin-overview-icon">🛵</span>
+            <div>
+                <span class="admin-overview-label">AVAILABLE RIDERS</span>
+                <strong>{{ riders|length }}</strong>
+            </div>
+        </div>
+
+        <div class="admin-overview-card">
+            <span class="admin-overview-icon">💳</span>
+            <div>
+                <span class="admin-overview-label">PAYMENT MANAGEMENT</span>
+                <strong>Active</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Heading -->
+    <div class="admin-orders-section-heading">
+        <div>
+            <h4>All customer orders</h4>
+            <p>Review each order and manage its progress.</p>
+        </div>
+
+        <span class="admin-order-count">
+            {{ orders|length }} total
+        </span>
+    </div>
+
+    {% if orders %}
+
+    <div class="premium-admin-orders-list">
+
+        {% for order in orders %}
+        {% set order_state = order.order_status|string|lower %}
+        {% set payment_state = order.payment_status|string|lower %}
+
+        <article class="premium-admin-order-card">
+
+            <!-- Order Header -->
+            <div class="admin-order-card-header">
+                <div class="admin-order-identity">
+                    <div class="admin-order-bag-icon">🛍️</div>
+
+                    <div>
+                        <span class="admin-meta-label">ORDER NUMBER</span>
+                        <h5>Order #{{ order.id }}</h5>
+                        <span class="admin-order-date">{{ order.created_at }}</span>
+                    </div>
+                </div>
+
+                <div class="admin-order-header-right">
+                    <div class="admin-order-total">
+                        <span class="admin-meta-label">ORDER VALUE</span>
+                        <strong>₹{{ "%.2f"|format(order.total_amount) }}</strong>
+                    </div>
+
+                    <span class="admin-order-status
+                        {% if order_state == 'delivered' %}admin-status-delivered
+                        {% elif order_state == 'cancelled' %}admin-status-cancelled
+                        {% elif order_state in ['preparing', 'confirmed', 'ready for pickup', 'out for delivery'] %}admin-status-progress
+                        {% else %}admin-status-pending{% endif %}">
+                        <span class="admin-status-dot"></span>
+                        {{ order.order_status }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Customer, Payment and Delivery Details -->
+            <div class="admin-order-info-grid">
+
+                <div class="admin-order-info-box">
+                    <div class="admin-info-box-heading">
+                        <span>👤</span> Customer details
+                    </div>
+
+                    <div class="admin-info-box-content">
+                        <strong>
+                            {{ order.customer_name or 'Guest Customer' }}
+                        </strong>
+
+                        <span class="admin-break-text">
+                            {{ order.customer_email or 'Email not available' }}
+                        </span>
+
+                        {% if order.customer_phone %}
+                            <span class="admin-break-text">
+                                📞 {{ order.customer_phone }}
+                            </span>
+                        {% endif %}
+
+                        <div class="admin-address-line">
+                            <span>📍</span>
+                            <span>{{ order.delivery_address or 'Address not available' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-order-info-box">
+                    <div class="admin-info-box-heading">
+                        <span>💳</span> Payment details
+                    </div>
+
+                    <div class="admin-info-box-content">
+                        <span class="admin-meta-label">PAYMENT METHOD</span>
+                        <strong>{{ order.payment_method }}</strong>
+
+                        <span class="admin-meta-label admin-payment-label">
+                            PAYMENT STATUS
+                        </span>
+
+                        <span class="admin-payment-status
+                            {% if payment_state == 'paid' %}admin-payment-paid
+                            {% elif payment_state == 'rejected' %}admin-payment-rejected
+                            {% else %}admin-payment-pending{% endif %}">
+                            {{ order.payment_status }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="admin-order-info-box">
+                    <div class="admin-info-box-heading">
+                        <span>🛵</span> Delivery assignment
+                    </div>
+
+                    <div class="admin-info-box-content">
+                        <span class="admin-meta-label">RIDER STATUS</span>
+
+                        {% if order.rider_id %}
+                            <strong>Rider assigned</strong>
+                            <span class="admin-break-text">
+                                Update the assignment below if needed.
+                            </span>
+                        {% else %}
+                            <strong class="admin-no-rider">Awaiting assignment</strong>
+                            <span class="admin-break-text">
+                                Select a rider to arrange delivery.
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Management Controls -->
+            <div class="admin-order-controls">
+
+                <!-- Update Order Status -->
+                <form method="POST"
+                      action="{{ url_for('update_order_status', order_id=order.id) }}"
+                      class="admin-control-form">
+
+                    <div class="admin-control-heading">
+                        <span class="admin-control-number">01</span>
+                        <div>
+                            <strong>Order status</strong>
+                            <small>Update order progress</small>
+                        </div>
+                    </div>
+
+                    <label for="order_status_{{ order.id }}"
+                           class="admin-control-label">
+                        Select new status
+                    </label>
+
+                    <select id="order_status_{{ order.id }}"
+                            name="order_status"
+                            class="form-select admin-premium-select"
+                            required>
+                        {% for status in statuses %}
+                        <option value="{{ status }}"
+                            {% if status == order.order_status %}selected{% endif %}>
+                            {{ status }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit" class="admin-control-btn admin-btn-dark">
+                        Update order status <span>→</span>
+                    </button>
+                </form>
+
+                <!-- Verify Payment -->
+                <form method="POST"
+                      action="{{ url_for('update_payment_status', order_id=order.id) }}"
+                      class="admin-control-form">
+
+                    <div class="admin-control-heading">
+                        <span class="admin-control-number">02</span>
+                        <div>
+                            <strong>Payment verification</strong>
+                            <small>Confirm payment status</small>
+                        </div>
+                    </div>
+
+                    <label for="payment_status_{{ order.id }}"
+                           class="admin-control-label">
+                        Select payment status
+                    </label>
+
+                    <select id="payment_status_{{ order.id }}"
+                            name="payment_status"
+                            class="form-select admin-premium-select"
+                            required>
+                        {% for payment_status in ['Pending', 'Paid', 'Rejected'] %}
+                        <option value="{{ payment_status }}"
+                            {% if payment_status == order.payment_status %}selected{% endif %}>
+                            {{ payment_status }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit"
+                            class="admin-control-btn admin-btn-payment">
+                        Update payment <span>→</span>
+                    </button>
+                </form>
+
+                <!-- Assign Rider -->
+                <form method="POST"
+                      action="{{ url_for('assign_rider', order_id=order.id) }}"
+                      class="admin-control-form">
+
+                    <div class="admin-control-heading">
+                        <span class="admin-control-number">03</span>
+                        <div>
+                            <strong>Delivery rider</strong>
+                            <small>Assign or change rider</small>
+                        </div>
+                    </div>
+
+                    <label for="rider_id_{{ order.id }}"
+                           class="admin-control-label">
+                        Select delivery rider
+                    </label>
+
+                    <select id="rider_id_{{ order.id }}"
+                            name="rider_id"
+                            class="form-select admin-premium-select"
+                            required>
+                        <option value="">-- Select Rider --</option>
+
+                        {% for rider in riders %}
+                        <option value="{{ rider.id }}"
+                            {% if order.rider_id|string == rider.id|string %}selected{% endif %}>
+                            {{ rider.name }}{% if rider.phone %} - {{ rider.phone }}{% endif %}
+                        </option>
+                        {% else %}
+                        <option value="" disabled>
+                            No riders available. Add a rider first.
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit"
+                            class="admin-control-btn admin-btn-rider"
+                            {% if not riders %}disabled{% endif %}>
+                        Assign rider <span>→</span>
+                    </button>
+                </form>
+
+            </div>
+
+        </article>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <!-- Empty State -->
+    <div class="admin-orders-empty">
+        <div class="admin-empty-icon">📦</div>
+        <h3>No orders yet</h3>
+        <p>Customer orders will appear here when they place an order.</p>
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-dashboard-back">
+            ← Return to dashboard
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | Smart Food{% endblock %}
+
+{% block content %}
+<div class="container-fluid premium-admin-dashboard py-4 py-lg-5">
+
+    <!-- Dashboard Header -->
+    <div class="admin-dashboard-header d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <div class="admin-eyebrow">
+                <span class="admin-live-dot"></span>
+                SMART FOOD MANAGEMENT
+            </div>
+            <h2 class="admin-dashboard-title mb-2">Dashboard Overview</h2>
+            <p class="admin-dashboard-subtitle mb-0">
+                Welcome back, Admin! Here's what's happening with your business.
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin_logout') }}"
+           class="btn admin-logout-btn">
+            <span>↗</span> Logout
+        </a>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-3 g-xl-4 mb-4">
+
+        <div class="col-6 col-xl-3">
+            <div class="admin-stat-card stat-orders h-100">
+                <div class="admin-stat-top">
+                    <div class="admin-stat-icon">📦</div>
+                    <span class="admin-stat-label">ORDERS</span>
+                </div>
+                <p class="admin-stat-caption">Total Orders</p>
+                <h3 class="admin-stat-number">{{ total_orders }}</h3>
+                <div class="admin-stat-footer">
+                    <span class="stat-indicator"></span>
+                    All-time orders
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-xl-3">
+            <div class="admin-stat-card stat-customers h-100">
+                <div class="admin-stat-top">
+                    <div class="admin-stat-icon">👥</div>
+                    <span class="admin-stat-label">COMMUNITY</span>
+                </div>
+                <p class="admin-stat-caption">Total Customers</p>
+                <h3 class="admin-stat-number">{{ total_customers }}</h3>
+                <div class="admin-stat-footer">
+                    <span class="stat-indicator"></span>
+                    Registered customers
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-xl-3">
+            <div class="admin-stat-card stat-foods h-100">
+                <div class="admin-stat-top">
+                    <div class="admin-stat-icon">🍔</div>
+                    <span class="admin-stat-label">MENU</span>
+                </div>
+                <p class="admin-stat-caption">Available Foods</p>
+                <h3 class="admin-stat-number">{{ total_foods }}</h3>
+                <div class="admin-stat-footer">
+                    <span class="stat-indicator"></span>
+                    Menu items
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-xl-3">
+            <div class="admin-stat-card stat-active h-100">
+                <div class="admin-stat-top">
+                    <div class="admin-stat-icon">🛵</div>
+                    <span class="admin-stat-label">LIVE ACTIVITY</span>
+                </div>
+                <p class="admin-stat-caption">Active Orders</p>
+                <h3 class="admin-stat-number">{{ active_orders }}</h3>
+                <div class="admin-stat-footer">
+                    <span class="stat-indicator"></span>
+                    Orders in progress
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Management Section -->
+    <section class="admin-panel-card mb-4">
+        <div class="admin-section-heading">
+            <div>
+                <span class="admin-section-kicker">CONTROL CENTER</span>
+                <h4>Manage Your Business</h4>
+                <p>Quick access to your daily operations.</p>
+            </div>
+            <div class="admin-heading-icon">⚙️</div>
+        </div>
+
+        <div class="row g-3">
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <a href="{{ url_for('admin_orders') }}"
+                   class="admin-action-card">
+                    <div class="admin-action-icon action-red">📦</div>
+                    <div class="admin-action-content">
+                        <h6>Manage Orders</h6>
+                        <p>Review orders and update their status.</p>
+                    </div>
+                    <span class="admin-action-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <a href="{{ url_for('admin_foods') }}"
+                   class="admin-action-card">
+                    <div class="admin-action-icon action-orange">🍔</div>
+                    <div class="admin-action-content">
+                        <h6>Food Menu</h6>
+                        <p>View and manage available food items.</p>
+                    </div>
+                    <span class="admin-action-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <a href="{{ url_for('admin_add_food') }}"
+                   class="admin-action-card">
+                    <div class="admin-action-icon action-green">＋</div>
+                    <div class="admin-action-content">
+                        <h6>Add New Food</h6>
+                        <p>Add dishes to your restaurant menu.</p>
+                    </div>
+                    <span class="admin-action-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <a href="{{ url_for('customers') }}"
+                   class="admin-action-card">
+                    <div class="admin-action-icon action-purple">👥</div>
+                    <div class="admin-action-content">
+                        <h6>Customers</h6>
+                        <p>View your registered customer list.</p>
+                    </div>
+                    <span class="admin-action-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <a href="{{ url_for('rider_management') }}"
+                   class="admin-action-card">
+                    <div class="admin-action-icon action-blue">🛵</div>
+                    <div class="admin-action-content">
+                        <h6>Rider Management</h6>
+                        <p>Manage your delivery partners.</p>
+                    </div>
+                    <span class="admin-action-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <a href="{{ url_for('rider_dashboard') }}"
+                   class="admin-action-card">
+                    <div class="admin-action-icon action-teal">🚚</div>
+                    <div class="admin-action-content">
+                        <h6>Rider Orders</h6>
+                        <p>Access delivery and rider order details.</p>
+                    </div>
+                    <span class="admin-action-arrow">→</span>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Recent Orders -->
+    <section class="admin-panel-card admin-recent-orders">
+        <div class="admin-section-heading recent-orders-heading">
+            <div>
+                <span class="admin-section-kicker">ORDER ACTIVITY</span>
+                <h4>Recent Orders</h4>
+                <p>Keep track of the latest customer orders.</p>
+            </div>
+
+            <a href="{{ url_for('admin_orders') }}"
+               class="admin-view-all-btn">
+                View All Orders <span>→</span>
+            </a>
+        </div>
+
+        {% if recent_orders %}
+        <div class="table-responsive admin-orders-table-wrap">
+            <table class="table align-middle admin-orders-table mb-0">
+                <thead>
+                    <tr>
+                        <th>ORDER</th>
+                        <th>CUSTOMER</th>
+                        <th>ORDER TOTAL</th>
+                        <th>PAYMENT</th>
+                        <th>ORDER STATUS</th>
+                        <th>DATE</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td>
+                            <span class="admin-order-id">#{{ order.id }}</span>
+                        </td>
+
+                        <td>
+                            <div class="admin-customer-cell">
+                                <div class="admin-customer-avatar">
+                                    {{ (order.customer_name or 'C')[0]|upper }}
+                                </div>
+                                <span>{{ order.customer_name or 'Customer' }}</span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="admin-order-total">
+                                ₹{{ "%.2f"|format(order.total_amount|float) }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% set payment = (order.payment_status or 'Pending')|lower %}
+                            <span class="admin-payment-badge
+                                {% if payment == 'paid' %}payment-paid
+                                {% elif payment in ['rejected', 'failed'] %}payment-failed
+                                {% else %}payment-pending{% endif %}">
+                                {{ order.payment_status or 'Pending' }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% set status = (order.order_status or 'Pending')|lower %}
+                            <span class="admin-order-status
+                                {% if status == 'delivered' %}order-delivered
+                                {% elif status == 'cancelled' %}order-cancelled
+                                {% elif status in ['out for delivery', 'ready for pickup'] %}order-delivery
+                                {% elif status in ['preparing', 'processing'] %}order-preparing
+                                {% else %}order-pending{% endif %}">
+                                {{ order.order_status or 'Pending' }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="admin-order-date">{{ order.created_at }}</span>
+                        </td>
+
+                        <td>
+                            <a href="{{ url_for('admin_orders') }}"
+                               class="admin-manage-btn">
+                                Manage
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="admin-empty-state">
+            <div class="admin-empty-icon">🧾</div>
+            <h5>No orders yet</h5>
+            <p>Your recent customer orders will appear here.</p>
+            <a href="{{ url_for('admin_orders') }}" class="admin-view-all-btn">
+                Open Order Management →
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Footer note -->
+    <div class="admin-dashboard-note">
+        <span>●</span>
+        Smart Food Admin Panel
+        <span class="admin-note-separator">•</span>
+        Manage your orders, menu, customers and deliveries in one place.
+    </div>
+
+</div>
+{% endblock %}

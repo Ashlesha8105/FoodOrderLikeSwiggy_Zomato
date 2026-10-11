@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Food | Discover Delicious Food{% endblock %}
+
+{% block content %}
+
+<!-- ================= PREMIUM VIDEO HERO ================= -->
+<section class="video-hero">
+
+    <!-- KEEPING YOUR ORIGINAL BACKGROUND VIDEO -->
+    <video class="hero-video"
+           autoplay
+           muted
+           loop
+           playsinline
+           preload="auto">
+        <source src="{{ url_for('static', filename='videos/food-bg.mp4') }}"
+                type="video/mp4">
+    </video>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+        <span class="hero-tag">
+            <i class="fa-solid fa-sparkles me-2"></i>
+            GOOD FOOD. GOOD MOOD.
+        </span>
+
+        <h1>
+            Your cravings,<br>
+            <span>our delicious mission.</span>
+        </h1>
+
+        <p>
+            Discover delicious meals, explore new flavours
+            and get your favourites delivered to your doorstep.
+        </p>
+
+        <!-- Food Search -->
+        <form class="hero-search"
+              action="{{ url_for('menu') }}"
+              method="GET">
+
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+
+            <input type="text"
+                   name="q"
+                   placeholder="Search pizza, burger, biryani..."
+                   aria-label="Search food">
+
+            <button type="submit">
+                Search
+                <i class="fa-solid fa-arrow-right ms-1"></i>
+            </button>
+
+        </form>
+
+        <!-- Main CTA -->
+        <a href="{{ url_for('menu') }}" class="hero-button">
+            Explore Food Menu
+            <i class="fa-solid fa-arrow-right ms-2"></i>
+        </a>
+
+        <!-- Features -->
+        <div class="hero-features">
+            <span>
+                <i class="fa-solid fa-circle-check me-1"></i>
+                Freshly Prepared
+            </span>
+
+            <span>
+                <i class="fa-solid fa-bag-shopping me-1"></i>
+                Easy Ordering
+            </span>
+
+            <span>
+                <i class="fa-solid fa-wallet me-1"></i>
+                UPI &amp; COD
+            </span>
+        </div>
+
+    </div>
+
+    <!-- <div class="hero-bottom-label">
+        <span class="hero-dot"></span>
+        YOUR NEXT FAVOURITE MEAL AWAITS
+    </div> -->
+
+    <div class="hero-scroll-indicator">
+        <span></span>
+    </div>
+
+</section>
+
+
+<!-- ================= FOOD CATEGORIES ================= -->
+<section class="food-categories" id="categories">
+
+    <div class="container">
+
+        <div class="category-heading">
+            <span class="section-eyebrow">
+                <i class="fa-solid fa-compass me-1"></i>
+                EXPLORE YOUR CRAVINGS
+            </span>
+
+            <h2>
+                What would you like to
+                <span>eat today?</span>
+            </h2>
+
+            <p class="text-muted mt-2 mb-0">
+                Find something delicious for every mood.
+            </p>
+        </div>
+
+        <div class="category-list">
+
+            <a href="{{ url_for('menu') }}"
+               class="category-item">
+                <span class="category-icon">🍽️</span>
+                <span>All Food</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Burgers') }}"
+               class="category-item">
+                <span class="category-icon">🍔</span>
+                <span>Burgers</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Pizza') }}"
+               class="category-item">
+                <span class="category-icon">🍕</span>
+                <span>Pizza</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Indian') }}"
+               class="category-item">
+                <span class="category-icon">🍛</span>
+                <span>Indian</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='South Indian') }}"
+               class="category-item">
+                <span class="category-icon">🥞</span>
+                <span>South Indian</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Snacks') }}"
+               class="category-item">
+                <span class="category-icon">🍟</span>
+                <span>Snacks</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Desserts') }}"
+               class="category-item">
+                <span class="category-icon">🍰</span>
+                <span>Desserts</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Chinese') }}"
+               class="category-item">
+                <span class="category-icon">🍜</span>
+                <span>Chinese</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='VEG') }}"
+               class="category-item">
+                <span class="category-icon">🥬</span>
+                <span>VEG</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='NON-VEG') }}"
+               class="category-item">
+                <span class="category-icon">🍗</span>
+                <span>NON-VEG</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Sandwiches') }}"
+               class="category-item">
+                <span class="category-icon">🥪</span>
+                <span>Sandwiches</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Pasta') }}"
+               class="category-item">
+                <span class="category-icon">🍝</span>
+                <span>Pasta</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Thalis') }}"
+               class="category-item">
+                <span class="category-icon">🍱</span>
+                <span>Thalis</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Beverages') }}"
+               class="category-item">
+                <span class="category-icon">🥤</span>
+                <span>Beverages</span>
+            </a>
+
+            <a href="{{ url_for('menu', category='Ice Cream') }}"
+               class="category-item">
+                <span class="category-icon">🍨</span>
+                <span>Ice Cream</span>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= POPULAR FOOD ================= -->
+<section class="popular-section" id="popular-food">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="section-eyebrow">
+                    <i class="fa-solid fa-fire me-1"></i>
+                    MADE FOR YOUR CRAVINGS
+                </span>
+
+                <h2>
+                    Popular
+                    <span>right now.</span>
+                </h2>
+
+                <p>
+                    Delicious picks you'll want to try.
+                </p>
+            </div>
+
+            <a href="{{ url_for('menu') }}"
+               class="view-menu-link">
+                View all food
+                <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+
+        </div>
+
+
+        <!-- Dynamic Food Cards -->
+        <div class="row g-4 mt-2">
+
+            {% for food in foods %}
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="food-card h-100">
+
+                    <a href="{{ url_for('menu') }}"
+                       class="food-image-link">
+
+                        <img src="{{ food.image }}"
+                             alt="{{ food.name }}"
+                             class="food-card-image"
+                             loading="lazy"
+                             onerror="this.onerror=null;this.src='https://placehold.co/500x350?text=Delicious+Food'">
+
+                        <span class="food-badge">
+                            <i class="fa-solid fa-star me-1"></i>
+                            POPULAR
+                        </span>
+
+                    </a>
+
+                    <div class="food-card-content">
+
+                        <h5>{{ food.name }}</h5>
+
+                        <p>{{ food.description }}</p>
+
+                        <div class="food-card-bottom">
+
+                            <strong>
+                                ₹{{ "%.0f"|format(food.price) }}
+                            </strong>
+
+                            <form action="{{ url_for('add_to_cart', food_id=food.id) }}"
+                                  method="POST">
+
+                                <button class="food-add-button"
+                                        type="submit"
+                                        aria-label="Add {{ food.name }} to cart">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="col-12">
+
+                <div class="text-center py-5">
+                    <i class="fa-solid fa-bowl-food fa-3x mb-3 text-muted"></i>
+
+                    <h5>No food items available yet.</h5>
+
+                    <p class="text-muted">
+                        Please check back soon for something delicious.
+                    </p>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PREMIUM CALL TO ACTION ================= -->
+<section class="home-cta">
+
+    <div class="home-cta-content">
+
+        <span>
+            <i class="fa-solid fa-heart me-2"></i>
+            YOUR CRAVINGS, YOUR CHOICE
+        </span>
+
+        <h2>
+            Good food is always<br>
+            worth sharing.
+        </h2>
+
+        <p>
+            Your favourite flavours are just a few clicks away.
+            Discover your next delicious meal today.
+        </p>
+
+        <a href="{{ url_for('menu') }}">
+            Order Something Delicious
+            <i class="fa-solid fa-arrow-right ms-2"></i>
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

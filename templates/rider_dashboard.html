@@ -1,0 +1,202 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+{% if rider_view %}Rider Orders{% else %}Manage Riders{% endif %} | Smart Food
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    {% if rider_view %}
+
+    <!-- Rider Orders Dashboard -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">🛵 Delivery Dashboard</h2>
+            <p class="text-muted mb-0">View assigned orders and update delivery progress.</p>
+        </div>
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="btn btn-outline-dark">
+            ← Admin Dashboard
+        </a>
+    </div>
+
+    {% if orders %}
+    <div class="row g-3">
+        {% for order in orders %}
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+                        <div>
+                            <h5 class="fw-bold">Order #{{ order.id }}</h5>
+                            <span class="text-muted small">{{ order.created_at }}</span>
+                        </div>
+
+                        <span class="badge text-bg-warning align-self-start">
+                            {{ order.order_status }}
+                        </span>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <strong>Customer</strong>
+                            <p class="mb-1">{{ order.customer_name }}</p>
+                            <p class="small text-muted mb-0">{{ order.customer_phone }}</p>
+                        </div>
+
+                        <div class="col-md-5">
+                            <strong>Delivery Address</strong>
+                            <p class="mb-0">{{ order.delivery_address }}</p>
+                        </div>
+
+                        <div class="col-md-3">
+                            <strong>Order Amount</strong>
+                            <h5 class="fw-bold mt-1">
+                                ₹{{ "%.2f"|format(order.total_amount) }}
+                            </h5>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <form method="POST"
+                          action="{{ url_for('update_order_status', order_id=order.id) }}"
+                          class="row g-2 align-items-end">
+
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">
+                                Update Delivery Status
+                            </label>
+
+                            <select name="order_status" class="form-select" required>
+                                {% for status in statuses %}
+                                <option value="{{ status }}"
+                                    {% if status == order.order_status %}selected{% endif %}>
+                                    {{ status }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-success w-100">
+                                Update Status
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="alert alert-info">
+        No orders are currently assigned to riders.
+    </div>
+    {% endif %}
+
+    {% else %}
+
+    <!-- Admin Rider Management -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">🛵 Manage Delivery Riders</h2>
+            <p class="text-muted mb-0">Register and manage delivery riders.</p>
+        </div>
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="btn btn-outline-dark">
+            ← Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Add New Rider</h5>
+
+                    <form method="POST" action="{{ url_for('rider_management') }}">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Rider Name</label>
+                            <input type="text"
+                                   id="name"
+                                   name="name"
+                                   class="form-control"
+                                   maxlength="100"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel"
+                                   id="phone"
+                                   name="phone"
+                                   class="form-control"
+                                   maxlength="20"
+                                   required>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning fw-bold w-100">
+                            Add Rider
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Registered Riders</h5>
+
+                    {% if riders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Availability</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for rider in riders %}
+                                <tr>
+                                    <td>{{ rider.id }}</td>
+                                    <td class="fw-semibold">{{ rider.name }}</td>
+                                    <td>{{ rider.phone or '—' }}</td>
+                                    <td>
+                                        {% if rider.available %}
+                                        <span class="badge text-bg-success">Available</span>
+                                        {% else %}
+                                        <span class="badge text-bg-secondary">Unavailable</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No riders registered yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}

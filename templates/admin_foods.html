@@ -1,0 +1,48 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Food Items</h2>
+
+    <a href="{{ url_for('admin_dashboard') }}"
+       class="btn btn-secondary mb-3">
+        Back to Dashboard
+    </a>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Food Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Available</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for food in foods %}
+                <tr>
+                    <td>{{ food.id }}</td>
+                    <td>{{ food.name }}</td>
+                    <td>{{ food.category }}</td>
+                    <td>₹{{ "%.2f"|format(food.price) }}</td>
+                    <td>
+                        {% if food.available %}
+                            Available
+                        {% else %}
+                            Unavailable
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">No food items found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

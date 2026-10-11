@@ -1,0 +1,126 @@
+
+{% extends "base.html" %}
+
+{% block title %}Edit Food | Smart Food{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">✏️ Edit Food Item</h2>
+                <a href="{{ url_for('admin_foods') }}"
+                   class="btn btn-outline-dark">
+                    Back to Menu
+                </a>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <form method="POST"
+                          action="{{ url_for('admin_edit_food', food_id=food.id) }}">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                Food Name
+                            </label>
+                            <input type="text"
+                                   id="name"
+                                   name="name"
+                                   class="form-control"
+                                   value="{{ food.name }}"
+                                   maxlength="100"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                Description
+                            </label>
+                            <textarea id="description"
+                                      name="description"
+                                      class="form-control"
+                                      rows="3">{{ food.description }}</textarea>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="price" class="form-label">
+                                    Price (₹)
+                                </label>
+                                <input type="number"
+                                       id="price"
+                                       name="price"
+                                       class="form-control"
+                                       value="{{ food.price }}"
+                                       min="0.01"
+                                       step="0.01"
+                                       required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">
+                                    Category
+                                </label>
+                                <select id="category"
+                                        name="category"
+                                        class="form-select"
+                                        required>
+                                    {% for category in [
+                                        'Indian',
+                                        'Pizza',
+                                        'Burgers',
+                                        'South Indian',
+                                        'Snacks',
+                                        'Desserts',
+                                        'Drinks',
+                                        'Other'
+                                    ] %}
+                                    <option value="{{ category }}"
+                                        {% if food.category == category %}selected{% endif %}>
+                                        {{ category }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label for="image" class="form-label">
+                                Food Image URL
+                            </label>
+                            <input type="url"
+                                   id="image"
+                                   name="image"
+                                   class="form-control"
+                                   value="{{ food.image }}"
+                                   placeholder="https://example.com/food.jpg">
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input type="checkbox"
+                                   id="available"
+                                   name="available"
+                                   class="form-check-input"
+                                   {% if food.available %}checked{% endif %}>
+                            <label for="available" class="form-check-label">
+                                Available for ordering
+                            </label>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-warning fw-bold w-100">
+                            Save Changes
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

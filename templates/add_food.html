@@ -1,0 +1,122 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Food | Smart Food{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">➕ Add New Food</h2>
+                <a href="{{ url_for('admin_foods') }}"
+                   class="btn btn-outline-dark">
+                    Back to Menu
+                </a>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <form method="POST"
+                          action="{{ url_for('admin_add_food') }}">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                Food Name
+                            </label>
+                            <input type="text"
+                                   id="name"
+                                   name="name"
+                                   class="form-control"
+                                   placeholder="Example: Veg Burger"
+                                   maxlength="100"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                Description
+                            </label>
+                            <textarea id="description"
+                                      name="description"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Describe the food item"></textarea>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="price" class="form-label">
+                                    Price (₹)
+                                </label>
+                                <input type="number"
+                                       id="price"
+                                       name="price"
+                                       class="form-control"
+                                       min="0.01"
+                                       step="0.01"
+                                       required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">
+                                    Category
+                                </label>
+                                <select id="category"
+                                        name="category"
+                                        class="form-select"
+                                        required>
+                                    <option value="">Select Category</option>
+                                    <option value="Indian">Indian</option>
+                                    <option value="Pizza">Pizza</option>
+                                    <option value="Burgers">Burgers</option>
+                                    <option value="South Indian">South Indian</option>
+                                    <option value="Snacks">Snacks</option>
+                                    <option value="Desserts">Desserts</option>
+                                    <option value="Drinks">Drinks</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label for="image" class="form-label">
+                                Food Image URL
+                            </label>
+                            <input type="url"
+                                   id="image"
+                                   name="image"
+                                   class="form-control"
+                                   placeholder="https://example.com/food.jpg">
+                            <small class="text-muted">
+                                Enter a publicly accessible image URL.
+                            </small>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input type="checkbox"
+                                   id="available"
+                                   name="available"
+                                   class="form-check-input"
+                                   checked>
+                            <label for="available" class="form-check-label">
+                                Available for ordering
+                            </label>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-warning fw-bold w-100">
+                            Add Food Item
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

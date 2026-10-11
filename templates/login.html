@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+
+{% block title %}Customer Login | Smart Food{% endblock %}
+
+{% block content %}
+<section class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-icon">🍔</div>
+
+        <span class="eyebrow">WELCOME BACK</span>
+        <h1>Login to Smart Food</h1>
+        <p class="auth-subtitle">
+            Sign in to order food and track your deliveries.
+        </p>
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="auth-submit">
+                Login →
+            </button>
+        </form>
+
+        <p class="auth-switch">
+            Don't have an account?
+            <a href="{{ url_for('register') }}">Create account</a>
+        </p>
+
+        <div class="auth-divider"></div>
+
+        <a href="{{ url_for('admin_login') }}" class="admin-login-link">
+            Admin Login
+        </a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description"
+          content="Smart Food - Discover delicious food, explore your favourites and get them delivered to your doorstep.">
+
+    <title>{% block title %}Smart Food | Delicious Food Delivered{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}?v=6">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Premium Navigation -->
+    <nav class="navbar navbar-expand-lg smart-navbar sticky-top">
+        <div class="container">
+
+            <!-- Brand -->
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <span class="brand-icon">
+                    <i class="fa-solid fa-utensils"></i>
+                </span>
+
+                <span class="brand-name">
+                    Smart <span>Food</span>
+                </span>
+            </a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">
+                            <i class="fa-solid fa-house me-1"></i>
+                            Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('menu') }}">
+                            <i class="fa-solid fa-bowl-food me-1"></i>
+                            Explore Menu
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cart') }}">
+                            <i class="fa-solid fa-cart-shopping me-1"></i>
+                            My Cart
+                        </a>
+                    </li>
+
+                    {% if session.get('customer_id') %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('orders') }}">
+                            <i class="fa-solid fa-box me-1"></i>
+                            My Orders
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-orange nav-action"
+                           href="{{ url_for('logout') }}">
+                            <i class="fa-solid fa-right-from-bracket me-1"></i>
+                            Logout
+                        </a>
+                    </li>
+
+                    {% else %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="fa-regular fa-user me-1"></i>
+                            Login
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-orange nav-action"
+                           href="{{ url_for('register') }}">
+                            Get Started
+                            <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </li>
+
+                    {% endif %}
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container flash-container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+
+                    <div class="alert alert-{{ category }} alert-dismissible fade show"
+                         role="alert">
+
+                        <i class="fa-solid fa-circle-info me-2"></i>
+                        {{ message }}
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    </div>
+
+    <!-- Main Page Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Premium Footer -->
+    <footer class="smart-footer">
+        <div class="container">
+
+            <div class="row g-4 py-5">
+
+                <!-- Brand Information -->
+                <div class="col-lg-5 col-md-6">
+
+                    <a class="footer-brand"
+                       href="{{ url_for('home') }}">
+
+                        <span class="footer-brand-icon">
+                            <i class="fa-solid fa-utensils"></i>
+                        </span>
+
+                        Smart <span>Food</span>
+                    </a>
+
+                    <p class="footer-description mt-3">
+                        Good food, great mood! Discover your favourites,
+                        satisfy your cravings and enjoy delicious food
+                        delivered straight to your doorstep.
+                    </p>
+
+                    <div class="footer-highlight">
+                        <i class="fa-solid fa-heart me-2"></i>
+                        Bringing happiness to every meal.
+                    </div>
+                </div>
+
+                <!-- Explore -->
+                <div class="col-6 col-lg-3 col-md-3">
+
+                    <h6 class="footer-heading">Explore</h6>
+
+                    <a class="footer-link"
+                       href="{{ url_for('home') }}">
+                        <i class="fa-solid fa-angle-right me-2"></i>
+                        Home
+                    </a>
+
+                    <a class="footer-link"
+                       href="{{ url_for('menu') }}">
+                        <i class="fa-solid fa-angle-right me-2"></i>
+                        Our Menu
+                    </a>
+
+                    <a class="footer-link"
+                       href="{{ url_for('cart') }}">
+                        <i class="fa-solid fa-angle-right me-2"></i>
+                        My Cart
+                    </a>
+                </div>
+
+                <!-- Account -->
+                <div class="col-6 col-lg-4 col-md-3">
+
+                    <h6 class="footer-heading">Your Account</h6>
+
+                    {% if session.get('customer_id') %}
+
+                    <a class="footer-link"
+                       href="{{ url_for('orders') }}">
+                        <i class="fa-solid fa-angle-right me-2"></i>
+                        My Orders
+                    </a>
+
+                    <a class="footer-link"
+                       href="{{ url_for('logout') }}">
+                        <i class="fa-solid fa-angle-right me-2"></i>
+                        Logout
+                    </a>
+
+                    {% else %}
+
+                    <a class="footer-link"
+                       href="{{ url_for('login') }}">
+                        <i class="fa-solid fa-angle-right me-2"></i>
+                        Login
+                    </a>
+
+                    <a class="footer-link"
+                       href="{{ url_for('register') }}">
+                        <i class="fa-solid fa-angle-right me-2"></i>
+                        Create Account
+                    </a>
+
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <hr class="footer-divider">
+
+            <!-- Copyright -->
+            <div class="footer-bottom">
+
+                <p class="mb-0">
+                    © 2026 Smart Food. All rights reserved.
+                </p>
+
+                <p class="mb-0">
+                    Made with
+                    <i class="fa-solid fa-heart footer-heart"></i>
+                    for food lovers.
+                </p>
+
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

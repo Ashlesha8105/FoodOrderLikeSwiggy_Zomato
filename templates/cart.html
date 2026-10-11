@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}My Cart | Smart Food{% endblock %}
+
+{% block content %}
+
+<section class="premium-cart-page">
+
+    <div class="container">
+
+        <!-- Cart Heading -->
+        <div class="cart-page-heading">
+
+            <div>
+                <span class="section-eyebrow">
+                    <i class="fa-solid fa-bag-shopping me-2"></i>
+                    YOUR FOOD SELECTION
+                </span>
+
+                <h1>
+                    My <span>Cart</span>
+                </h1>
+
+                <p>Review your favourite food before checkout.</p>
+            </div>
+
+            <a href="{{ url_for('menu') }}" class="cart-back-link">
+                <i class="fa-solid fa-arrow-left me-2"></i>
+                Continue shopping
+            </a>
+
+        </div>
+
+
+        {% if items %}
+
+        <div class="row g-4 align-items-start">
+
+            <!-- ================= CART ITEMS ================= -->
+            <div class="col-lg-8">
+
+                <div class="cart-items-heading">
+                    <h2>Your selected items</h2>
+
+                    <span class="cart-item-count">
+                        {{ items|length }}
+                        {% if items|length == 1 %}item{% else %}items{% endif %}
+                    </span>
+                </div>
+
+
+                {% for item in items %}
+
+                <article class="premium-cart-item">
+
+                    <!-- Food Image -->
+                    <div class="premium-cart-image-wrap">
+
+                        <img
+                            src="{{ item.image or 'https://placehold.co/300x220?text=Food' }}"
+                            alt="{{ item.name }}"
+                            class="premium-cart-image"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='https://placehold.co/300x220?text=Food';">
+
+                    </div>
+
+
+                    <!-- Food Information -->
+                    <div class="premium-cart-details">
+
+                        <h3>{{ item.name }}</h3>
+
+                        <p class="cart-unit-price">
+                            ₹{{ "%.2f"|format(item.price) }} per item
+                        </p>
+
+                        <div class="cart-quantity-area">
+
+                            <form method="POST"
+                                  action="{{ url_for('update_cart', food_id=item.id) }}"
+                                  class="premium-quantity-form">
+
+                                <label for="quantity-{{ item.id }}">
+                                    Quantity
+                                </label>
+
+                                <div class="quantity-control">
+
+                                    <input
+                                        type="number"
+                                        id="quantity-{{ item.id }}"
+                                        name="quantity"
+                                        min="1"
+                                        max="20"
+                                        value="{{ item.quantity }}"
+                                        required
+                                        aria-label="Quantity for {{ item.name }}">
+
+                                    <button type="submit"
+                                            class="quantity-update-btn"
+                                            title="Update quantity"
+                                            aria-label="Update quantity for {{ item.name }}">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Item Total and Remove -->
+                    <div class="premium-cart-item-actions">
+
+                        <div class="cart-line-total">
+                            <small>Item total</small>
+
+                            <strong>
+                                ₹{{ "%.2f"|format(item.price * item.quantity) }}
+                            </strong>
+                        </div>
+
+                        <form method="POST"
+                              action="{{ url_for('remove_from_cart', food_id=item.id) }}"
+                              onsubmit="return confirm('Remove {{ item.name }} from your cart?');">
+
+                            <button type="submit"
+                                    class="cart-remove-btn">
+                                <i class="fa-regular fa-trash-can me-1"></i>
+                                Remove
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+
+                <!-- Continue Shopping -->
+                <a href="{{ url_for('menu') }}" class="cart-continue-bottom">
+                    <i class="fa-solid fa-plus me-2"></i>
+                    Add more delicious food
+                </a>
+
+            </div>
+
+
+            <!-- ================= ORDER SUMMARY ================= -->
+            <div class="col-lg-4">
+
+                <aside class="premium-order-summary">
+
+                    <div class="summary-heading">
+                        <div class="summary-heading-icon">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+
+                        <div>
+                            <h2>Order Summary</h2>
+                            <p>Your order at a glance</p>
+                        </div>
+                    </div>
+
+
+                    <div class="summary-divider"></div>
+
+
+                    <div class="summary-row">
+                        <span>Items total</span>
+                        <strong>₹{{ "%.2f"|format(total) }}</strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>
+                            <i class="fa-solid fa-truck-fast me-2"></i>
+                            Delivery fee
+                        </span>
+
+                        <strong class="free-delivery">FREE</strong>
+                    </div>
+
+
+                    <div class="summary-divider"></div>
+
+
+                    <div class="summary-grand-total">
+                        <div>
+                            <h3>Grand Total</h3>
+                            <p>Inclusive of listed item prices</p>
+                        </div>
+
+                        <strong>₹{{ "%.2f"|format(total) }}</strong>
+                    </div>
+
+
+                    <a href="{{ url_for('checkout') }}"
+                       class="premium-checkout-btn">
+
+                        Proceed to Checkout
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+
+                    <div class="checkout-security-note">
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                        <span>
+                            Review your order details before confirming.
+                        </span>
+                    </div>
+
+
+                    <a href="{{ url_for('menu') }}"
+                       class="summary-continue-link">
+                        <i class="fa-solid fa-arrow-left me-2"></i>
+                        Continue shopping
+                    </a>
+
+                </aside>
+
+
+                <!-- Small Information Card -->
+                <div class="cart-help-card">
+
+                    <div class="cart-help-icon">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+
+                    <div>
+                        <h4>Made for your cravings</h4>
+                        <p>
+                            Find more favourites in our food menu.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- ================= EMPTY CART ================= -->
+        <div class="premium-empty-cart">
+
+            <div class="empty-cart-illustration">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <span>
+                    <i class="fa-solid fa-plus"></i>
+                </span>
+            </div>
+
+            <span class="section-eyebrow">
+                SOMETHING DELICIOUS IS MISSING
+            </span>
+
+            <h2>Your cart is feeling empty!</h2>
+
+            <p>
+                Looks like you haven't added anything yet.
+                Explore our menu and discover your next favourite meal.
+            </p>
+
+            <a href="{{ url_for('menu') }}"
+               class="premium-checkout-btn empty-cart-btn">
+
+                <i class="fa-solid fa-utensils"></i>
+                Explore Food Menu
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

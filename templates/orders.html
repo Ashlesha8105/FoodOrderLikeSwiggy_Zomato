@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders | Smart Food{% endblock %}
+
+{% block content %}
+<div class="container premium-orders-page py-4 py-lg-5">
+
+    <!-- Page Header -->
+    <div class="orders-page-header">
+        <div>
+            <span class="orders-eyebrow">YOUR FOOD JOURNEY</span>
+            <h2>My Orders <span>📦</span></h2>
+            <p>Track your orders and revisit your delicious choices.</p>
+        </div>
+
+        <a href="{{ url_for('menu') }}" class="orders-browse-btn">
+            <span>＋</span> Order more food
+        </a>
+    </div>
+
+    {% if orders %}
+
+    <!-- Order Count -->
+    <div class="orders-list-heading">
+        <div>
+            <h4>Your orders</h4>
+            <p>All your food orders in one place.</p>
+        </div>
+        <span class="orders-count">
+            {{ orders|length }} order{% if orders|length != 1 %}s{% endif %}
+        </span>
+    </div>
+
+    <div class="premium-orders-list">
+
+        {% for order in orders %}
+        <article class="premium-order-card">
+
+            <!-- Card Header -->
+            <div class="premium-order-header">
+                <div class="order-reference">
+                    <div class="order-reference-icon">🛍️</div>
+                    <div>
+                        <span class="order-muted-label">ORDER NUMBER</span>
+                        <h5>#{{ order.id }}</h5>
+                    </div>
+                </div>
+
+                <div class="order-date">
+                    <span class="order-muted-label">ORDER DATE</span>
+                    <span>{{ order.created_at }}</span>
+                </div>
+
+                <div class="order-status-wrap">
+                    <span class="order-muted-label">ORDER STATUS</span>
+                    {% set status = order.order_status|string|lower %}
+                    <span class="premium-status-badge
+                        {% if status == 'delivered' %}status-delivered
+                        {% elif status == 'cancelled' %}status-cancelled
+                        {% elif status in ['preparing', 'confirmed', 'out for delivery', 'on the way'] %}status-progress
+                        {% else %}status-pending{% endif %}">
+                        <span class="status-dot"></span>
+                        {{ order.order_status }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Order Information -->
+            <div class="premium-order-details">
+
+                <div class="order-detail-box">
+                    <span class="order-detail-icon">💰</span>
+                    <div>
+                        <span class="order-muted-label">TOTAL AMOUNT</span>
+                        <strong class="order-amount">
+                            ₹{{ "%.2f"|format(order.total_amount) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="order-detail-box">
+                    <span class="order-detail-icon">💳</span>
+                    <div>
+                        <span class="order-muted-label">PAYMENT METHOD</span>
+                        <strong>{{ order.payment_method }}</strong>
+
+                        <span class="payment-status-text
+                            {% if order.payment_status|string|lower == 'paid' %}payment-paid
+                            {% else %}payment-unpaid{% endif %}">
+                            {{ order.payment_status }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="order-detail-box address-detail-box">
+                    <span class="order-detail-icon">📍</span>
+                    <div>
+                        <span class="order-muted-label">DELIVERY ADDRESS</span>
+                        <strong class="order-address">
+                            {{ order.delivery_address }}
+                        </strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Actions -->
+            <div class="premium-order-footer">
+
+                <span class="order-footer-note">
+                    {% if status == 'delivered' %}
+                        <span>✓</span> Hope you enjoyed your meal!
+                    {% elif status == 'cancelled' %}
+                        This order has been cancelled.
+                    {% else %}
+                        <span>🍽️</span> Your meal journey, made easy.
+                    {% endif %}
+                </span>
+
+                <div class="order-action-buttons">
+
+                    {% if status != 'cancelled' %}
+                    <a
+                        href="{{ url_for('track_order', order_id=order.id) }}"
+                        class="order-track-btn">
+                        Track order <span>→</span>
+                    </a>
+                    {% endif %}
+
+                    {% if order.payment_method == 'UPI'
+                          and order.payment_status != 'Paid'
+                          and status != 'cancelled' %}
+                    <a
+                        href="{{ url_for('payment', order_id=order.id) }}"
+                        class="order-payment-btn">
+                        Pay now
+                    </a>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </article>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <!-- Empty State -->
+    <div class="premium-orders-empty">
+        <div class="empty-orders-illustration">
+            <span>🍔</span>
+            <span>🍕</span>
+            <span>🍟</span>
+        </div>
+
+        <span class="orders-eyebrow">YOUR NEXT FAVOURITE MEAL AWAITS</span>
+        <h3>No orders yet</h3>
+        <p>
+            You haven't placed an order yet. Explore the menu
+            and find something delicious.
+        </p>
+
+        <a href="{{ url_for('menu') }}" class="orders-browse-btn">
+            Explore food menu <span>→</span>
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

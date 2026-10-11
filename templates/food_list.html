@@ -1,0 +1,121 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manage Food Menu | Smart Food{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold">🍔 Manage Food Menu</h2>
+            <p class="text-muted mb-0">Add, edit, and manage menu availability.</p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ url_for('admin_add_food') }}"
+               class="btn btn-warning fw-semibold">
+                + Add Food
+            </a>
+
+            <a href="{{ url_for('admin_dashboard') }}"
+               class="btn btn-outline-dark">
+                Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            {% if foods %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Image</th>
+                            <th>Food Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Availability</th>
+                            <th style="min-width: 170px;">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for food in foods %}
+                        <tr>
+                            <td>
+                                <img
+                                    src="{{ food.image }}"
+                                    alt="{{ food.name }}"
+                                    width="75"
+                                    height="60"
+                                    class="rounded object-fit-cover"
+                                    onerror="this.src='https://placehold.co/100x80?text=Food'">
+                            </td>
+
+                            <td>
+                                <strong>{{ food.name }}</strong>
+                                <div class="small text-muted">
+                                    {{ food.description }}
+                                </div>
+                            </td>
+
+                            <td>{{ food.category }}</td>
+
+                            <td class="fw-semibold">
+                                ₹{{ "%.2f"|format(food.price) }}
+                            </td>
+
+                            <td>
+                                {% if food.available %}
+                                <span class="badge text-bg-success">Available</span>
+                                {% else %}
+                                <span class="badge text-bg-secondary">Unavailable</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a
+                                        href="{{ url_for('admin_edit_food', food_id=food.id) }}"
+                                        class="btn btn-sm btn-outline-primary">
+                                        Edit
+                                    </a>
+
+                                    {% if food.available %}
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('admin_delete_food', food_id=food.id) }}"
+                                        onsubmit="return confirm('Disable this food item?');">
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger">
+                                            Disable
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+            <div class="text-center py-5">
+                <h5>No food items found.</h5>
+                <a href="{{ url_for('admin_add_food') }}"
+                   class="btn btn-warning mt-2">
+                    Add First Food Item
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
